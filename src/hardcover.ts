@@ -19,7 +19,10 @@ export interface HardcoverBook {
   slug: string;
   pages: number | null;
   release_date: string | null;
+  /** Hardcover's community average, not a personal score. */
   rating: number | null;
+  /** How many people rated it -- distinct from users_count, which counts shelvings. */
+  ratings_count: number | null;
   users_count: number | null;
   description: string | null;
   image: HardcoverImage | null;
@@ -162,7 +165,7 @@ export async function searchBooks(
 
   const bookData = await gql<{ books: HardcoverBook[] }>(
     `query { books(where: {slug: {_in: [${list}]}}, order_by: {users_count: desc}) {
-      id title subtitle slug pages release_date rating users_count description
+      id title subtitle slug pages release_date rating ratings_count users_count description
       image { url width height color }
       cached_image
       cached_tags

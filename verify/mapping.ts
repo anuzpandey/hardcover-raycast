@@ -23,6 +23,7 @@ const misery = {
   pages: 384,
   release_date: "1987-01-01",
   rating: 4.1479658792650919,
+  ratings_count: 2871,
   users_count: 3345,
   description:
     "Paul Sheldon used to write for a living. Now he''s writing to stay alive.\n\nMisery Chastain is dead. That''s when the car accident happens.",
@@ -127,3 +128,22 @@ console.log("notes    :", withShelf.notes);
 const noOverrides = JSON.parse(toJson(misery, options)) as Record<string, unknown>;
 console.log("\ndefaults unchanged when nothing is set:");
 console.log("status   :", noOverrides.status, "| reading:", noOverrides.reading, "| rating:", noOverrides.rating);
+
+// The community average must never land in `rating`, which is a personal score.
+console.log("\n--- public vs personal rating ---");
+const asJson = JSON.parse(toJson(misery, options)) as Record<string, unknown>;
+console.log("public_rating        :", asJson.public_rating, "(Hardcover average, rounded)");
+console.log("public_ratings_count :", asJson.public_ratings_count);
+console.log("rating (yours)       :", asJson.rating);
+
+const rated = JSON.parse(
+  toJson(misery, options, { rating: 4 }),
+) as Record<string, unknown>;
+console.log("\nwith your rating set to 4:");
+console.log("rating               :", rated.rating);
+console.log("public_rating        :", rated.public_rating, "(unchanged)");
+
+console.log(
+  "\nkey order matches the portfolio:",
+  Object.keys(asJson).join(",").includes("rating,public_rating,public_ratings_count,notes"),
+);

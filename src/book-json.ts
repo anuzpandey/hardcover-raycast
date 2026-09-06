@@ -20,7 +20,11 @@ export interface BookEntry {
   isbn: string | null;
   status: "purchased" | "to_buy";
   reading: "unread" | "reading" | "finished";
+  /** Your own score out of 5. */
   rating: number | null;
+  /** Hardcover's community average, and how many ratings it is drawn from. */
+  public_rating: number | null;
+  public_ratings_count: number | null;
   notes: string | null;
   description: string | null;
   img: string;
@@ -175,6 +179,13 @@ export function toEntry(
     reading: overrides.reading ?? "unread",
     // Deliberately not Hardcover's average: this field is your own score.
     rating: overrides.rating ?? null,
+    // Hardcover's own numbers, kept well away from `rating` above: conflating
+    // a 4.15 community average with a personal 4/5 would quietly destroy the
+    // latter. Rounded because the raw value carries fifteen decimal places and
+    // would make every re-run of the shelf a noisy diff.
+    public_rating:
+      book.rating === null ? null : Math.round(book.rating * 100) / 100,
+    public_ratings_count: book.ratings_count ?? null,
     notes: overrides.notes ?? null,
     description: cleanDescription(book.description),
     img: `${options.imagePathPrefix}/${coverFileName(book, options)}`,

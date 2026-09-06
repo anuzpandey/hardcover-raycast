@@ -112,7 +112,9 @@ which is why the two cannot be combined.
 
 ## Fields that are deliberately left blank
 
-- `rating` — this is *your* score out of 5, not Hardcover's community average.
+- `rating` — this is *your* score out of 5. Hardcover's community average is
+  emitted separately as `public_rating`, with `public_ratings_count` alongside
+  it, so the two can never be confused for one another.
 - `genre` — read from the undocumented `cached_tags` blob when its shape is
   recognisable, otherwise left null to fill in by hand.
 - `publisher` — lives on the edition, and rarely the edition you own.

@@ -19,7 +19,9 @@ import {
  *
  * All the rules live in store-logic.ts; this file is only the I/O around them.
  */
-const cache = new Cache({ namespace: "search" });
+// Namespace bumped when the query changes shape, so entries cached before a
+// new field existed are not served back missing it.
+const cache = new Cache({ namespace: "search-v2" });
 
 const HISTORY_KEY = "history";
 
