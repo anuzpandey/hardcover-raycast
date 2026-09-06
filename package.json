@@ -1,0 +1,183 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "hardcover",
+  "title": "Hardcover",
+  "description": "Search Hardcover for book metadata, copy it as JSON and grab the cover art.",
+  "icon": "command-icon.png",
+  "author": "anuzpandey",
+  "categories": [
+    "Media",
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "search-books",
+      "title": "Search Books",
+      "subtitle": "Hardcover",
+      "description": "Search Hardcover and copy a book as a books.json entry",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "apiToken",
+      "title": "API Token",
+      "description": "Personal access token from hardcover.app account settings > Hardcover API",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "downloadDir",
+      "title": "Cover Download Folder",
+      "description": "Where Download Cover saves the image. Point this at public/content-img/books in your portfolio repo. Defaults to ~/Downloads.",
+      "type": "directory",
+      "required": false
+    },
+    {
+      "name": "imagePathPrefix",
+      "title": "Cover Path Prefix",
+      "description": "What goes into the img field of the copied JSON",
+      "type": "textfield",
+      "required": false,
+      "default": "img/books"
+    },
+    {
+      "name": "gridColumns",
+      "title": "Grid Columns",
+      "description": "How many covers per row",
+      "type": "dropdown",
+      "required": false,
+      "default": "5",
+      "data": [
+        {
+          "title": "3",
+          "value": "3"
+        },
+        {
+          "title": "4",
+          "value": "4"
+        },
+        {
+          "title": "5",
+          "value": "5"
+        },
+        {
+          "title": "6",
+          "value": "6"
+        },
+        {
+          "title": "7",
+          "value": "7"
+        },
+        {
+          "title": "8",
+          "value": "8"
+        }
+      ]
+    },
+    {
+      "name": "imageFormat",
+      "title": "Cover Format",
+      "description": "WebP matches the rest of the site's content images. Falls back to the original if cwebp is not installed.",
+      "type": "dropdown",
+      "required": false,
+      "default": "webp",
+      "data": [
+        {
+          "title": "WebP",
+          "value": "webp"
+        },
+        {
+          "title": "Original (JPEG)",
+          "value": "original"
+        }
+      ]
+    },
+    {
+      "name": "maxHeight",
+      "title": "Max Cover Height",
+      "description": "Covers taller than this are shrunk. Never upscaled.",
+      "type": "dropdown",
+      "required": false,
+      "default": "900",
+      "data": [
+        {
+          "title": "600 px",
+          "value": "600"
+        },
+        {
+          "title": "750 px",
+          "value": "750"
+        },
+        {
+          "title": "900 px (recommended)",
+          "value": "900"
+        },
+        {
+          "title": "1200 px",
+          "value": "1200"
+        },
+        {
+          "title": "Don't resize",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "name": "quality",
+      "title": "WebP Quality",
+      "type": "dropdown",
+      "required": false,
+      "default": "82",
+      "data": [
+        {
+          "title": "70",
+          "value": "70"
+        },
+        {
+          "title": "75",
+          "value": "75"
+        },
+        {
+          "title": "80",
+          "value": "80"
+        },
+        {
+          "title": "82",
+          "value": "82"
+        },
+        {
+          "title": "85",
+          "value": "85"
+        },
+        {
+          "title": "90",
+          "value": "90"
+        }
+      ]
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^2.2.0",
+    "@raycast/utils": "^2.3.1"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.2.0",
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.4.0",
+    "tsx": "^4.23.0",
+    "typescript": "^5.7.0"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix",
+    "publish": "npx @raycast/api@latest publish",
+    "verify": "tsx verify/mapping.ts && tsx verify/store.ts"
+  },
+  "type": "module"
+}
