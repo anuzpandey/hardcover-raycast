@@ -9,6 +9,7 @@ import {
   coverExtension,
 } from "../src/book-json";
 import { downloadCover } from "../src/download";
+import { whereFrom } from "../src/where-from";
 import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -94,6 +95,8 @@ console.log(
 );
 console.log("is webp       :", bytes.subarray(8, 12).toString() === "WEBP");
 console.log("json img      :", (JSON.parse(toJson(misery, options)) as { img: string }).img);
+console.log("tagged        :", result.tagged);
+console.log("where from    :", await whereFrom(result.path));
 
 const second = await downloadCover(misery, { ...options, downloadDir: dir });
 console.log("second replaced:", second.replaced);

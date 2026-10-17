@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { coverFileName, coverUrl, type EntryOptions } from "./book-json";
 import { toWebp, webpAvailable } from "./convert";
 import type { HardcoverBook } from "./hardcover";
+import { setWhereFrom } from "./where-from";
 
 export interface DownloadResult {
   path: string;
@@ -10,6 +11,8 @@ export interface DownloadResult {
   originalBytes: number;
   replaced: boolean;
   converted: boolean;
+  /** Whether Finder's "Where from" was set; see setWhereFrom. */
+  tagged: boolean;
 }
 
 /**
@@ -72,12 +75,23 @@ export async function downloadCover(
 
   await writeFile(path, buffer);
 
+  // Best effort: the cover is already saved, and a missing attribute only
+  // means a folder automation will not recognise it.
+  let tagged = true;
+
+  try {
+    await setWhereFrom(path, [url, `https://hardcover.app/books/${book.slug}`]);
+  } catch {
+    tagged = false;
+  }
+
   return {
     path,
     bytes: buffer.byteLength,
     originalBytes: original.byteLength,
     replaced,
     converted,
+    tagged,
   };
 }
 

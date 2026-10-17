@@ -226,9 +226,11 @@ function BookActions({
                 toast.title = result.replaced
                   ? "Cover replaced"
                   : "Cover saved";
-                toast.message = result.converted
-                  ? `${result.path} · ${kb} KB (webp, −${saved}%)`
-                  : `${result.path} · ${kb} KB`;
+                toast.message =
+                  (result.converted
+                    ? `${result.path} · ${kb} KB (webp, −${saved}%)`
+                    : `${result.path} · ${kb} KB`) +
+                  (result.tagged ? "" : " · no Where from");
                 toast.primaryAction = {
                   title: "Show in Finder",
                   onAction: () => showInFinder(result.path),
