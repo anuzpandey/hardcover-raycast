@@ -12,12 +12,14 @@ import {
 import { useState } from "react";
 import {
   genreOf,
+  toEntry,
   toJson,
   type BookEntry,
   type EntryOverrides,
 } from "./book-json";
 import { downloadCover } from "./download";
 import type { HardcoverBook, Options } from "./hardcover";
+import { pushToHardcover } from "./push";
 import { writeEntryDefaults, type EntryDefaults } from "./store";
 
 const SHELVES: { value: BookEntry["status"]; title: string }[] = [
@@ -100,6 +102,68 @@ export function ShelfForm({
     }
   };
 
+  /**
+   * Sends the same state to Hardcover that the JSON records, so the shelf on
+   * the site and the shelf in the repo cannot drift apart. Reading progress is
+   * left alone deliberately -- that is logged in the app while actually
+   * reading, and a push from here has no page count to offer it.
+   */
+  const push = async () => {
+    const toast = await showToast({
+      style: Toast.Style.Animated,
+      title: "Saving to Hardcover…",
+    });
+
+    try {
+      const result = await pushToHardcover(
+        book,
+        toEntry(book, options, overrides()),
+      );
+      await remember();
+
+      toast.style = Toast.Style.Success;
+      toast.title = result.summary;
+      toast.message = book.title;
+
+      return true;
+    } catch (error) {
+      toast.style = Toast.Style.Failure;
+      toast.title = "Hardcover save failed";
+      toast.message = error instanceof Error ? error.message : String(error);
+
+      return false;
+    }
+  };
+
+  const pushOnly = async () => {
+    if (await push()) {
+      pop();
+    }
+  };
+
+  /**
+   * The whole entry in one keystroke: clipboard, cover, Hardcover. The copy
+   * happens first because it cannot fail, so a network error still leaves the
+   * JSON ready to paste.
+   */
+  const copyDownloadAndPush = async () => {
+    await Clipboard.copy(toJson(book, options, overrides()));
+
+    try {
+      await downloadCover(book, options);
+    } catch (error) {
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "Cover download failed",
+        message: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    if (await push()) {
+      pop();
+    }
+  };
+
   return (
     <Form
       navigationTitle={book.title}
@@ -111,6 +175,18 @@ export function ShelfForm({
             icon={Icon.Download}
             shortcut={Keyboard.Shortcut.Common.Save}
             onAction={copyAndDownload}
+          />
+          <Action
+            title="Copy, Download Cover and Save to Hardcover"
+            icon={Icon.Stars}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "return" }}
+            onAction={copyDownloadAndPush}
+          />
+          <Action
+            title="Save to Hardcover"
+            icon={Icon.Bookmark}
+            shortcut={{ modifiers: ["cmd"], key: "return" }}
+            onAction={pushOnly}
           />
         </ActionPanel>
       }

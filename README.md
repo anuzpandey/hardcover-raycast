@@ -32,6 +32,8 @@ present anyway, because a doubled prefix is reported by the API as
 | Open Cover in Browser | — | The full-resolution cover, ready to save and edit |
 | Copy Cover URL | `⌘⇧C` | Just the image URL |
 | Copy Download Command | `⌘⇧D` | `curl -L "…" -o public/content-img/books/<slug>.jpg` |
+| Save to Hardcover | `⌘↵` | Write the shelf state back to your Hardcover account (form only) |
+| Copy, Download Cover and Save to Hardcover | `⌘⇧↵` | All three at once (form only) |
 | Open on Hardcover | `⌘O` | The book's page on the website |
 | Remove from History | `⌃X` | Forget one book (history view only) |
 | Clear History | — | Forget everything |
@@ -52,6 +54,41 @@ in one step (`⌘S`).
 
 Shelf and reading state persist between books, since they tend to be added in
 runs: several purchases, then several wishlist items.
+
+## Saving back to Hardcover
+
+**Save to Hardcover** (`⌘↵`) sends the same state the JSON records up to your
+account, so the shelf in the repo and the shelf on the site cannot drift apart.
+`⌘⇧↵` does that plus the clipboard and the cover download in one keystroke.
+
+The two form fields map onto two *independent* things on Hardcover:
+
+| Form field | Hardcover | Why |
+| --- | --- | --- |
+| Reading → Want to Read | `status_id: 1` | |
+| Reading → Reading | `status_id: 2` | |
+| Reading → Finished | `status_id: 3` | |
+| Shelf → Purchased | a row in the **Owned** list | Hardcover has no owned *status* |
+| Shelf → To Buy | no row in that list | |
+| Rating | `rating` | Only sent when set, so it never clears one |
+| Notes | `private_notes` | Private to the account, not a public review |
+
+Ownership being a list rather than a status is the useful part: a book can be
+**Want to Read and owned** at the same time, which is exactly what "bought it,
+haven't started it" means. A wishlist book you have not bought is the same
+status with no list row. The Owned list is created on first use if the account
+has none.
+
+### What it will not do
+
+Reading **progress** is never pushed. That gets logged in the Hardcover app
+while you are actually reading, and a form with no page count has nothing
+useful to tell it — the portfolio reads progress in the other direction, via
+`php artisan books:progress`.
+
+Every push reads the current state first and writes only what actually differs.
+Re-saving an unchanged book reports "Already up to date" and sends nothing,
+which matters because each write is visible to anyone following the account.
 
 ## Cover format
 

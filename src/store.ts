@@ -21,7 +21,7 @@ import {
  */
 // Namespace bumped when the query changes shape, so entries cached before a
 // new field existed are not served back missing it.
-const cache = new Cache({ namespace: "search-v2" });
+const cache = new Cache({ namespace: "search-v3" });
 
 const HISTORY_KEY = "history";
 

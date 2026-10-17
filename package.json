@@ -177,7 +177,7 @@
     "lint": "ray lint",
     "fix-lint": "ray lint --fix",
     "publish": "npx @raycast/api@latest publish",
-    "verify": "tsx verify/mapping.ts && tsx verify/store.ts"
+    "verify": "tsx verify/mapping.ts && tsx verify/store.ts && tsx verify/push.ts"
   },
   "type": "module"
 }

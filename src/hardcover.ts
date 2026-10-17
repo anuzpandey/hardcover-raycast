@@ -29,6 +29,7 @@ export interface HardcoverBook {
   cached_image: (HardcoverImage & { color_name?: string }) | null;
   cached_tags: unknown;
   default_cover_edition: {
+    id: number | null;
     isbn_10: string | null;
     isbn_13: string | null;
     image: HardcoverImage | null;
@@ -75,7 +76,11 @@ export function preferences(): Options {
   };
 }
 
-async function gql<T>(query: string, signal?: AbortSignal): Promise<T> {
+export async function gql<T>(
+  query: string,
+  variables?: Record<string, unknown>,
+  signal?: AbortSignal,
+): Promise<T> {
   const { apiToken } = preferences();
 
   const response = await fetch(ENDPOINT, {
@@ -87,7 +92,7 @@ async function gql<T>(query: string, signal?: AbortSignal): Promise<T> {
       Authorization: `Bearer ${apiToken}`,
       "User-Agent": "raycast-hardcover (personal use)",
     },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify(variables ? { query, variables } : { query }),
     signal,
   });
 
@@ -152,6 +157,7 @@ export async function searchBooks(
 
   const searchData = await gql<{ search: { results: unknown } }>(
     `query { search(query: "${escape(term)}", query_type: "Book", per_page: 10, page: 1) { results } }`,
+    undefined,
     signal,
   );
 
@@ -169,9 +175,10 @@ export async function searchBooks(
       image { url width height color }
       cached_image
       cached_tags
-      default_cover_edition { isbn_10 isbn_13 image { url } }
+      default_cover_edition { id isbn_10 isbn_13 image { url } }
       contributions { author { name } }
     } }`,
+    undefined,
     signal,
   );
 
