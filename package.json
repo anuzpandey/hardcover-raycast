@@ -127,6 +127,7 @@
     {
       "name": "quality",
       "title": "WebP Quality",
+      "description": "WebP encoding quality. Lower is smaller, higher keeps more detail.",
       "type": "dropdown",
       "required": false,
       "default": "82",

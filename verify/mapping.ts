@@ -23,7 +23,7 @@ const misery = {
   slug: "misery",
   pages: 384,
   release_date: "1987-01-01",
-  rating: 4.1479658792650919,
+  rating: 4.147965879265092,
   ratings_count: 2871,
   users_count: 3345,
   description:
